@@ -149,8 +149,9 @@ exit 0
 
 
 %files
+%license LICENSE
 %doc doc/* examples/*
-%doc CHANGELOG LICENSE README ROADMAP VERSION
+%doc CHANGELOG README ROADMAP VERSION
 %dir %{haproxy_confdir}
 %dir %{haproxy_datadir}
 %{haproxy_datadir}/*
@@ -171,6 +172,7 @@ exit 0
 - Port from Fedora to IUS
 - Disable Lua support
 - Don't try to use system-wide crypto-policies, not present in EL
+- Mark LICENSE as %%license
 
 * Thu Dec 29 2016 Ryan O'Hara <rohara@redhat.com> - 1.7.1-1
 - Update to 1.7.1
