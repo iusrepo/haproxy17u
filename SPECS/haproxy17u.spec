@@ -170,6 +170,7 @@ exit 0
 * Thu Jan 05 2017 Carl George <carl.george@rackspace.com> - 1.7.1-1.ius
 - Port from Fedora to IUS
 - Disable Lua support
+- Don't try to use system-wide crypto-policies, not present in EL
 
 * Thu Dec 29 2016 Ryan O'Hara <rohara@redhat.com> - 1.7.1-1
 - Update to 1.7.1
