@@ -9,8 +9,8 @@
 %bcond_without lua
 
 Name:           haproxy17u
-Version:        1.7.1
-Release:        2.ius%{?dist}
+Version:        1.7.2
+Release:        1.ius%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
 Group:          System Environment/Daemons
@@ -30,7 +30,7 @@ Patch1:         iprange-return-type.patch
 %if %{with lua}
 # src/hlua.c: "Requires Lua 5.3 or later."
 %if 0%{?rhel}
-BuildRequires:  lua53u-devel >= 5.3
+BuildRequires:  lua53u-devel
 %else
 BuildRequires:  lua-devel >= 5.3
 %endif
@@ -178,6 +178,9 @@ exit 0
 
 
 %changelog
+* Sat Jan 14 2017 Carl George <carl.george@rackspace.com> - 1.7.2-1.ius
+- Latest upstream
+
 * Tue Jan 10 2017 Carl George <carl.george@rackspace.com> - 1.7.1-2.ius
 - Enable Lua support
 
