@@ -6,6 +6,8 @@
 
 %global _hardened_build 1
 
+%{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
+
 %if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
 %bcond_without systemd
 %else
@@ -109,7 +111,7 @@ regparm_opts="USE_REGPARM=1"
     ${regparm_opts} \
     ADDINC="%{optflags}" \
     USE_LINUX_TPROXY=1 \
-    ADDLIB="%{__global_ldflags}"
+    ADDLIB="%{?__global_ldflags}"
 
 pushd contrib/halog
 %{__make} ${halog} OPTIMIZE="%{optflags}"
@@ -223,6 +225,7 @@ fi
 %changelog
 * Thu Feb 16 2017 Carl George <carl.george@rackspace.com> - 1.7.2-2.ius
 - Add EL6 support
+- Set __global_ldflags when undefined
 
 * Sat Jan 14 2017 Carl George <carl.george@rackspace.com> - 1.7.2-1.ius
 - Latest upstream
