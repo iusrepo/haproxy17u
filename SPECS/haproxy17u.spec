@@ -6,11 +6,17 @@
 
 %global _hardened_build 1
 
+%if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
+%bcond_without systemd
+%else
+%bcond_with systemd
+%endif
+
 %bcond_without lua
 
 Name:           haproxy17u
 Version:        1.7.2
-Release:        1.ius%{?dist}
+Release:        2.ius%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
 Group:          System Environment/Daemons
@@ -23,6 +29,7 @@ Source2:        haproxy.cfg
 Source3:        haproxy.logrotate
 Source4:        haproxy.sysconfig
 Source5:        halog.1
+Source6:        haproxy.init
 
 Patch0:         halog-unused-variables.patch
 Patch1:         iprange-return-type.patch
@@ -38,12 +45,21 @@ BuildRequires:  lua-devel >= 5.3
 BuildRequires:  pcre-devel
 BuildRequires:  zlib-devel
 BuildRequires:  openssl-devel
+%if %{with systemd}
 BuildRequires:  systemd-units
+%endif
 
 Requires(pre):      shadow-utils
+%if %{with systemd}
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
+%else
+Requires(post):     chkconfig
+Requires(preun):    chkconfig
+Requires(preun):    initscripts
+Requires(postun):   initscripts
+%endif
 
 Provides:       haproxy = %{version}-%{release}
 Provides:       haproxy%{?_isa} = %{version}-%{release}
@@ -108,7 +124,11 @@ popd
 %{__make} install-bin DESTDIR=%{buildroot} PREFIX=%{_prefix} TARGET="linux2628"
 %{__make} install-man DESTDIR=%{buildroot} PREFIX=%{_prefix}
 
+%if %{with systemd}
 %{__install} -p -D -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/haproxy.service
+%else
+%{__install} -p -D -m 0755 %{SOURCE6} %{buildroot}%{_initrddir}/haproxy
+%endif
 %{__install} -p -D -m 0644 %{SOURCE2} %{buildroot}%{haproxy_confdir}/haproxy.cfg
 %{__install} -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/haproxy
 %{__install} -p -D -m 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/sysconfig/haproxy
@@ -147,15 +167,34 @@ exit 0
 
 
 %post
+%if %{with systemd}
 %systemd_post haproxy.service
+%else
+if [ $1 -eq 1 ]; then
+    chkconfig --add haproxy &> /dev/null || :
+fi
+%endif
 
 
 %preun
+%if %{with systemd}
 %systemd_preun haproxy.service
+%else
+if [ $1 -eq 0 ]; then
+    service haproxy stop &> /dev/null || :
+    chkconfig --del haproxy &> /dev/null || :
+fi
+%endif
 
 
 %postun
+%if %{with systemd}
 %systemd_postun_with_restart haproxy.service
+%else
+if [ $1 -ge 1 ]; then
+    service haproxy condrestart &> /dev/null || :
+fi
+%endif
 
 
 %files
@@ -168,7 +207,11 @@ exit 0
 %config(noreplace) %{haproxy_confdir}/haproxy.cfg
 %config(noreplace) %{_sysconfdir}/logrotate.d/haproxy
 %config(noreplace) %{_sysconfdir}/sysconfig/haproxy
+%if %{with systemd}
 %{_unitdir}/haproxy.service
+%else
+%{_initrddir}/haproxy
+%endif
 %{_sbindir}/haproxy
 %{_sbindir}/haproxy-systemd-wrapper
 %{_bindir}/halog
@@ -178,6 +221,9 @@ exit 0
 
 
 %changelog
+* Thu Feb 16 2017 Carl George <carl.george@rackspace.com> - 1.7.2-2.ius
+- Add EL6 support
+
 * Sat Jan 14 2017 Carl George <carl.george@rackspace.com> - 1.7.2-1.ius
 - Latest upstream
 
