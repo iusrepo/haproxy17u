@@ -17,7 +17,7 @@
 %bcond_without lua
 
 Name:           haproxy17u
-Version:        1.7.2
+Version:        1.7.3
 Release:        1.ius%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
