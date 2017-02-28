@@ -18,7 +18,7 @@
 
 Name:           haproxy17u
 Version:        1.7.2
-Release:        2.ius%{?dist}
+Release:        1.ius%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
 Group:          System Environment/Daemons
@@ -223,6 +223,9 @@ fi
 
 
 %changelog
+* Tue Feb 28 2017 Ben Harper <ben.harper@rackspace.com> - 1.7.3-1.ius
+- Latest upstream
+
 * Thu Feb 16 2017 Carl George <carl.george@rackspace.com> - 1.7.2-2.ius
 - Add EL6 support
 - Set __global_ldflags when undefined
