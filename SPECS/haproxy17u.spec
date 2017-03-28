@@ -17,7 +17,7 @@
 %bcond_without lua
 
 Name:           haproxy17u
-Version:        1.7.3
+Version:        1.7.4
 Release:        1.ius%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
@@ -142,7 +142,7 @@ popd
 %{__install} -p -m 0755 ./contrib/iprange/iprange %{buildroot}%{_bindir}/iprange
 %{__install} -p -m 0644 ./examples/errorfiles/* %{buildroot}%{haproxy_datadir}
 
-for httpfile in $(find ./examples/errorfiles/ -type f) 
+for httpfile in $(find ./examples/errorfiles/ -type f)
 do
     %{__install} -p -m 0644 $httpfile %{buildroot}%{haproxy_datadir}
 done
@@ -223,6 +223,9 @@ fi
 
 
 %changelog
+* Tue Mar 28 2017 Ben Harper <ben.harper@rackspace.com> - 1.7.4-1.ius
+- Latest upstream
+
 * Tue Feb 28 2017 Ben Harper <ben.harper@rackspace.com> - 1.7.3-1.ius
 - Latest upstream
 
