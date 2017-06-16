@@ -47,9 +47,7 @@ BuildRequires:  lua-devel >= 5.3
 BuildRequires:  pcre-devel
 BuildRequires:  zlib-devel
 BuildRequires:  openssl-devel
-%if %{with systemd}
-BuildRequires:  systemd-units
-%endif
+%{?with_systemd:BuildRequires: systemd}
 
 Requires(pre):      shadow-utils
 %if %{with systemd}
