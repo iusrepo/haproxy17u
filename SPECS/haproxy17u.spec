@@ -226,6 +226,7 @@ fi
 * Fri Jun 16 2017 Carl George <carl.george@rackspace.com> - 1.7.6-1.ius
 - Latest upstream
 - Use KillMode=mixed in systemd service file (#1447085) (Fedora)
+- Check configuration before start and reload in systemd service file
 
 * Mon Apr 10 2017 Carl George <carl.george@rackspace.com> - 1.7.5-1.ius
 - Latest upstream
