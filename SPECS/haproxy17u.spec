@@ -17,7 +17,7 @@
 %bcond_without lua
 
 Name:           haproxy17u
-Version:        1.7.6
+Version:        1.7.7
 Release:        1.ius%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
@@ -221,6 +221,9 @@ fi
 
 
 %changelog
+* Thu Jul 06 2017 Ben Harper <ben.harper@rackspace.com> - 1.7.7-1.ius
+- Latest upstream
+
 * Fri Jun 16 2017 Carl George <carl.george@rackspace.com> - 1.7.6-1.ius
 - Latest upstream
 - Use KillMode=mixed in systemd service file (#1447085) (Fedora)
