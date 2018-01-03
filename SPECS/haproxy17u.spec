@@ -17,7 +17,7 @@
 %bcond_without lua
 
 Name:           haproxy17u
-Version:        1.7.9
+Version:        1.7.10
 Release:        1.ius%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
@@ -32,9 +32,6 @@ Source3:        haproxy.logrotate
 Source4:        haproxy.sysconfig
 Source5:        halog.1
 Source6:        haproxy.init
-
-Patch0:         halog-unused-variables.patch
-Patch1:         iprange-return-type.patch
 
 %if %{with lua}
 # src/hlua.c: "Requires Lua 5.3 or later."
@@ -83,8 +80,6 @@ availability environments. Indeed, it can:
 
 %prep
 %setup -q -n haproxy-%{version}
-%patch0 -p0
-%patch1 -p0
 
 
 %build
@@ -221,6 +216,10 @@ fi
 
 
 %changelog
+* Wed Jan 03 2018 Ben Harper <ben.harper@rackspace.com> - 1.7.10-1.ius
+- Latest upstream
+- Remove Patch0 and Patch1, fixed upstream
+
 * Fri Aug 18 2017 Ben Harper <ben.harper@rackspace.com> -  1.7.9-1.ius
 - Latest upstream
 
