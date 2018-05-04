@@ -17,7 +17,7 @@
 %bcond_without lua
 
 Name:           haproxy17u
-Version:        1.7.10
+Version:        1.7.11
 Release:        1.ius%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
@@ -216,6 +216,9 @@ fi
 
 
 %changelog
+* Fri May 04 2018 Carl George <carl@george.computer> - 1.7.11-1.ius
+- Latest upstream
+
 * Wed Jan 03 2018 Ben Harper <ben.harper@rackspace.com> - 1.7.10-1.ius
 - Latest upstream
 - Remove Patch0 and Patch1, fixed upstream
