@@ -16,7 +16,7 @@
 
 Name:           haproxy17u
 Version:        1.7.11
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
 License:        GPLv2+
@@ -212,6 +212,9 @@ fi
 
 
 %changelog
+* Fri Aug 02 2019 Carl George <carl@george.computer> - 1.7.11-2
+- Rebuild for vendor tag
+
 * Fri May 04 2018 Carl George <carl@george.computer> - 1.7.11-1.ius
 - Latest upstream
 
