@@ -1,12 +1,10 @@
 %define haproxy_user    haproxy
 %define haproxy_group   %{haproxy_user}
-%define haproxy_home    %{_localstatedir}/lib/haproxy
+%define haproxy_homedir %{_localstatedir}/lib/haproxy
 %define haproxy_confdir %{_sysconfdir}/haproxy
 %define haproxy_datadir %{_datadir}/haproxy
 
 %global _hardened_build 1
-
-%{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 
 %if 0%{?fedora} >= 19 || 0%{?rhel} >= 7
 %bcond_without systemd
@@ -35,7 +33,7 @@ Source6:        haproxy.init
 BuildRequires:  gcc
 %if %{with lua}
 # src/hlua.c: "Requires Lua 5.3 or later."
-%if 0%{?rhel}
+%if %{defined rhel}
 BuildRequires:  lua53u-devel
 %else
 BuildRequires:  lua-devel >= 5.3
@@ -48,9 +46,7 @@ BuildRequires:  openssl-devel
 
 Requires(pre):      shadow-utils
 %if %{with systemd}
-Requires(post):     systemd
-Requires(preun):    systemd
-Requires(postun):   systemd
+%{?systemd_requires}
 %else
 Requires(post):     chkconfig
 Requires(preun):    chkconfig
@@ -88,7 +84,7 @@ regparm_opts=
 regparm_opts="USE_REGPARM=1"
 %endif
 
-%{__make} %{?_smp_mflags} \
+make %{?_smp_mflags} \
     CPU="generic" \
     TARGET="linux2628" \
     USE_OPENSSL=1 \
@@ -96,7 +92,7 @@ regparm_opts="USE_REGPARM=1"
     USE_ZLIB=1 \
 %if %{with lua}
     USE_LUA=1 \
-%if 0%{?rhel}
+%if %{defined rhel}
     LUA_LIB_NAME=lua-5.3 \
     LUA_INC=%{_includedir}/lua-5.3 \
 %endif
@@ -104,51 +100,51 @@ regparm_opts="USE_REGPARM=1"
     ${regparm_opts} \
     ADDINC="%{optflags}" \
     USE_LINUX_TPROXY=1 \
-    ADDLIB="%{?__global_ldflags}"
+    ADDLIB="%{build_ldflags}"
 
 pushd contrib/halog
-%{__make} ${halog} OPTIMIZE="%{optflags}"
+make ${halog} OPTIMIZE="%{optflags} %{build_ldflags}"
 popd
 
 pushd contrib/iprange
-%{__make} iprange OPTIMIZE="%{optflags}"
+make iprange OPTIMIZE="%{optflags} %{build_ldflags}"
 popd
 
 
 %install
-%{__make} install-bin DESTDIR=%{buildroot} PREFIX=%{_prefix} TARGET="linux2628"
-%{__make} install-man DESTDIR=%{buildroot} PREFIX=%{_prefix}
+make install-bin DESTDIR=%{buildroot} PREFIX=%{_prefix} TARGET="linux2628"
+make install-man DESTDIR=%{buildroot} PREFIX=%{_prefix}
 
 %if %{with systemd}
-%{__install} -p -D -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/haproxy.service
+install -p -D -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/haproxy.service
 %else
-%{__install} -p -D -m 0755 %{SOURCE6} %{buildroot}%{_initrddir}/haproxy
+install -p -D -m 0755 %{SOURCE6} %{buildroot}%{_initrddir}/haproxy
 %endif
-%{__install} -p -D -m 0644 %{SOURCE2} %{buildroot}%{haproxy_confdir}/haproxy.cfg
-%{__install} -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/haproxy
-%{__install} -p -D -m 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/sysconfig/haproxy
-%{__install} -p -D -m 0644 %{SOURCE5} %{buildroot}%{_mandir}/man1/halog.1
-%{__install} -d -m 0755 %{buildroot}%{haproxy_home}
-%{__install} -d -m 0755 %{buildroot}%{haproxy_datadir}
-%{__install} -d -m 0755 %{buildroot}%{_bindir}
-%{__install} -p -m 0755 ./contrib/halog/halog %{buildroot}%{_bindir}/halog
-%{__install} -p -m 0755 ./contrib/iprange/iprange %{buildroot}%{_bindir}/iprange
-%{__install} -p -m 0644 ./examples/errorfiles/* %{buildroot}%{haproxy_datadir}
+install -p -D -m 0644 %{SOURCE2} %{buildroot}%{haproxy_confdir}/haproxy.cfg
+install -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/logrotate.d/haproxy
+install -p -D -m 0644 %{SOURCE4} %{buildroot}%{_sysconfdir}/sysconfig/haproxy
+install -p -D -m 0644 %{SOURCE5} %{buildroot}%{_mandir}/man1/halog.1
+install -d -m 0755 %{buildroot}%{haproxy_homedir}
+install -d -m 0755 %{buildroot}%{haproxy_datadir}
+install -d -m 0755 %{buildroot}%{_bindir}
+install -p -m 0755 ./contrib/halog/halog %{buildroot}%{_bindir}/halog
+install -p -m 0755 ./contrib/iprange/iprange %{buildroot}%{_bindir}/iprange
+install -p -m 0644 ./examples/errorfiles/* %{buildroot}%{haproxy_datadir}
 
 for httpfile in $(find ./examples/errorfiles/ -type f)
 do
-    %{__install} -p -m 0644 $httpfile %{buildroot}%{haproxy_datadir}
+    install -p -m 0644 $httpfile %{buildroot}%{haproxy_datadir}
 done
 
-%{__rm} -rf ./examples/errorfiles/
+rm -rf ./examples/errorfiles/
 
-find ./examples/* -type f ! -name "*.cfg" -exec %{__rm} -f "{}" \;
+find ./examples/* -type f ! -name "*.cfg" -exec rm -f "{}" \;
 
 for textfile in $(find ./ -type f -name '*.txt')
 do
-    %{__mv} $textfile $textfile.old
+    mv $textfile $textfile.old
     iconv --from-code ISO8859-1 --to-code UTF-8 --output $textfile $textfile.old
-    %{__rm} -f $textfile.old
+    rm -f $textfile.old
 done
 
 
@@ -156,7 +152,7 @@ done
 getent group %{haproxy_group} >/dev/null || \
     groupadd -r %{haproxy_group}
 getent passwd %{haproxy_user} >/dev/null || \
-    useradd -r -g %{haproxy_user} -d %{haproxy_home} \
+    useradd -r -g %{haproxy_group} -d %{haproxy_homedir} \
     -s /sbin/nologin -c "haproxy" %{haproxy_user}
 exit 0
 
@@ -193,9 +189,9 @@ fi
 
 
 %files
-%license LICENSE
 %doc doc/* examples/*
 %doc CHANGELOG README ROADMAP VERSION
+%license LICENSE
 %dir %{haproxy_confdir}
 %dir %{haproxy_datadir}
 %{haproxy_datadir}/*
@@ -212,7 +208,7 @@ fi
 %{_bindir}/halog
 %{_bindir}/iprange
 %{_mandir}/man1/*
-%attr(-,%{haproxy_user},%{haproxy_group}) %dir %{haproxy_home}
+%attr(-,%{haproxy_user},%{haproxy_group}) %dir %{haproxy_homedir}
 
 
 %changelog
