@@ -18,7 +18,7 @@
 
 Name:           haproxy17u
 Version:        1.7.11
-Release:        1.ius%{?dist}
+Release:        1%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
 Group:          System Environment/Daemons
@@ -33,6 +33,7 @@ Source4:        haproxy.sysconfig
 Source5:        halog.1
 Source6:        haproxy.init
 
+BuildRequires:  gcc
 %if %{with lua}
 # src/hlua.c: "Requires Lua 5.3 or later."
 %if 0%{?rhel}
