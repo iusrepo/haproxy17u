@@ -15,8 +15,8 @@
 %bcond_without lua
 
 Name:           haproxy17u
-Version:        1.7.11
-Release:        2%{?dist}
+Version:        1.7.12
+Release:        1%{?dist}
 Summary:        HAProxy reverse proxy for high availability environments
 
 License:        GPLv2+
@@ -212,6 +212,9 @@ fi
 
 
 %changelog
+* Sun Nov 03 2019 Carl George <carl@george.computer> - 1.7.12-1
+- Latest upstream
+
 * Fri Aug 02 2019 Carl George <carl@george.computer> - 1.7.11-2
 - Rebuild for vendor tag
 
